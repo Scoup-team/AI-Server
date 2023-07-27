@@ -4,9 +4,8 @@ from imutils.contours import sort_contours
 import imutils
 from easyocr import Reader
 import cv2
-import requests
 import numpy as np
-from PIL import ImageFont, ImageDraw, Image
+from PIL import ImageDraw, Image
 
 def plt_imshow(title='image', img=None, figsize=(8 ,5)):
     plt.figure(figsize=figsize)
@@ -96,9 +95,6 @@ def make_scan_image(image, width, ksize=(5,5), min_threshold=75, max_threshold=2
     return transform_image
 
 def putText(cv_img, text, x, y, color=(0, 0, 0), font_size=2):
-    # Colab이 아닌 Local에서 수행 시에는 gulim.ttc 를 사용하면 됩니다.
-    # font = ImageFont.truetype("fonts/gulim.ttc", font_size)
-    # font = ImageFont.truetype('/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf', font_size)
     img = Image.fromarray(cv_img)
     
     draw = ImageDraw.Draw(img)
@@ -108,8 +104,6 @@ def putText(cv_img, text, x, y, color=(0, 0, 0), font_size=2):
 
     return cv_img  
 
-# img = Image.open('receipt1.jpeg')
-# image_nparray = np.asarray(img, dtype=np.uint8)
 org_image = cv2.imread('receipt1.jpeg', cv2.IMREAD_COLOR) 
 plt_imshow("orignal image", org_image)
 
@@ -133,5 +127,4 @@ for (bbox, text, prob) in results:
 	# 추출한 영역에 사각형을 그리고 인식한 글자를 표기합니다.
     cv2.rectangle(ticket1_image, tl, br, (0, 255, 0), 2)
     ticket1_image = putText(ticket1_image, text, tl[0], tl[1] - 60, (0, 255, 0), 50)
-	# cv2.putText(business_card_image, text, (tl[0], tl[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 plt_imshow("Image", ticket1_image, figsize=(16,10))
