@@ -3,6 +3,8 @@ from pororo import Pororo
 from pororo.pororo import SUPPORTED_TASKS
 from utils.image_util import plt_imshow, put_text
 import warnings
+from hangul_utils import split_syllables, join_jamos
+from symspellpy import SymSpell, Verbosity
 
 warnings.filterwarnings('ignore')
 
@@ -84,3 +86,16 @@ if __name__ == "__main__":
     # image_path = input("Enter image path: ")
     text = ocr.run_ocr('receipt1.jpeg', debug=True)
     print('Result :', text)
+
+    # result_words = []
+    sym_spell = SymSpell(max_dictionary_edit_distance=1)
+    sym_spell.load_dictionary('menu.txt', 0, 1)
+
+    for i in range(len(text)):
+        term = text[i]
+        term = split_syllables(term)
+        suggestions = sym_spell.lookup(term, Verbosity.ALL, max_edit_distance=1)
+        for sugg in suggestions:
+            text[i] = join_jamos(sugg.term)
+
+    print(text)
