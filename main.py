@@ -1,4 +1,5 @@
 import cv2
+import re
 from pororo import Pororo
 from pororo.pororo import SUPPORTED_TASKS
 from utils.image_util import plt_imshow, put_text
@@ -64,6 +65,7 @@ class PororoOcr:
             blY = text_result['vertices'][3]['y']
 
             pts = ((tlX, tlY), (trX, trY), (brX, brY), (blX, blY))
+            print("points: ", pts)
 
             topLeft = pts[0]
             topRight = pts[1]
@@ -85,17 +87,34 @@ if __name__ == "__main__":
     ocr = PororoOcr()
     # image_path = input("Enter image path: ")
     text = ocr.run_ocr('receipt1.jpeg', debug=True)
-    print('Result :', text)
+    print('OCR :', text)
 
-    # result_words = []
-    sym_spell = SymSpell(max_dictionary_edit_distance=1)
-    sym_spell.load_dictionary('menu.txt', 0, 1)
+    # sym_spell = SymSpell(max_dictionary_edit_distance=1)
+    # sym_spell.load_dictionary('menu.txt', 0, 1)
 
-    for i in range(len(text)):
-        term = text[i]
-        term = split_syllables(term)
-        suggestions = sym_spell.lookup(term, Verbosity.ALL, max_edit_distance=1)
-        for sugg in suggestions:
-            text[i] = join_jamos(sugg.term)
+    # for i in range(len(text)):
+    #     term = text[i]
+    #     term = split_syllables(term)
+    #     suggestions = sym_spell.lookup(term, Verbosity.ALL, max_edit_distance=1)
+    #     for sugg in suggestions:
+    #         text[i] = join_jamos(sugg.term)
 
-    print(text)
+    # print(text)
+
+    menu_file = open("menu.txt", "r")
+    menu = menu_file.read().split("\n")
+
+    rec_menus = []
+    rec_prices = []
+    for block in text:
+        block = block.replace(', ', '').replace('. ', '').replace('.', '')
+        for item in re.compile('[가-힣]+').findall(block):
+            if item in menu:
+                rec_menus.append(item)
+
+        if block[0].isdigit() and block[-2:] == '00':
+            rec_prices = block.split()
+        
+    print("Result!")
+    print(rec_menus)
+    print(rec_prices)

@@ -109,7 +109,7 @@ def enhance_txt(img):
 
     return binary
 
-raw_path = 'testReceipt.jpeg'
+raw_path = 'receipt1.jpeg'
 raw_img = cv2.imread(raw_path)
 
 # View raw image
