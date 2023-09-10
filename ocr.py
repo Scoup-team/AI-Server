@@ -33,12 +33,19 @@ def clova(file):
         'X-OCR-SECRET': secret_key,
     }
 
-    response = requests.request("POST", api_url, headers=headers, data = payload, files = files)
+    try:
+        response = requests.request("POST", api_url, headers=headers, data = payload, files = files)
+    except:
+        return {"status": 500, "message": "영수증 인식에 실패했습니다."}
     json_object = json.loads(response.text)
-    print(json_object)
+    # print(json_object)
 
     final_res = {}
-    result = json_object['images'][0]['receipt']['result']
+    try:
+        result = json_object['images'][0]['receipt']['result']
+        valid = result['subResults'][0]['items'][0]['price']
+    except:
+        return {"status": 400, "message": "올바른 영수증 형식이 아닙니다."}
 
     # store info
     try:
