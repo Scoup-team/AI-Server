@@ -1,2 +1,7 @@
 venv/
 *.pyc
+kor_dataset/
+deep-text-recognition-benchmark/ocr_data/
+*log.txt
+*annotation.json
+saved_models/

@@ -104,17 +104,29 @@ if __name__ == "__main__":
     menu_file = open("menu.txt", "r")
     menu = menu_file.read().split("\n")
 
+    rec_name = text[0]
     rec_menus = []
     rec_prices = []
+    
     for block in text:
-        block = block.replace(', ', '').replace('. ', '').replace('.', '')
-        for item in re.compile('[가-힣]+').findall(block):
+        block = block.replace(', ', '').replace(',', '').replace('. ', '').replace('.', '')
+        # TODO: 메뉴: 금액과 합계 이전 한글 추출해서 오타교정
+        # 가격: 원 이전으로 -> 위치 기반
+        # 가게명: 가장 처음 or "매장명"이 있다면 그 이후 괄호 전까지 오는 단어들
+        for item in re.compile('[가-힣 ]+').findall(block):
+            item = item.replace(" ", "")
             if item in menu:
                 rec_menus.append(item)
 
-        if block[0].isdigit() and block[-2:] == '00':
-            rec_prices = block.split()
-        
-    print("Result!")
+        for word in block.split():
+            if word[0].isdigit() and word[-2:] == '00':
+                rec_prices.append(word)
+    
+    if len(rec_menus) >= len(rec_prices):
+        rec_menus = rec_menus[:len(rec_prices)]
+    else:
+        rec_prices = rec_prices[:len(rec_menus)]
+    
+    print(rec_name)   
     print(rec_menus)
     print(rec_prices)
